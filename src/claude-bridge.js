@@ -104,7 +104,7 @@ function handleSend(ws, sessionId, content) {
         ...(process.env.ANTHROPIC_API_KEY && { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY }),
         ...(process.env.ANTHROPIC_BASE_URL && { ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL }),
       },
-      stdio: ['pipe', 'pipe', 'pipe'],
+      stdio: ['ignore', 'pipe', 'pipe'],
     });
   } catch (err) {
     send(ws, { type: 'error', sessionId, message: `Failed to spawn claude: ${err.message}` });
