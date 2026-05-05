@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import apiRouter from './src/routes/api.js';
 import { handleWebSocket } from './src/claude-bridge.js';
+import { basicAuth } from './src/middleware/auth.js';
 
 config();
 
@@ -20,6 +21,7 @@ const PORT = process.env.PORT || 3333;
 
 // Middleware
 app.use(express.json());
+app.use(basicAuth);
 app.use(express.static(join(__dirname, 'public')));
 
 // API routes
