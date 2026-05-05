@@ -1,9 +1,11 @@
 import { spawn } from 'child_process';
 import { sessionManager } from './session-manager.js';
 
-const CLAUDE_BIN = process.env.CLAUDE_BIN || 'claude';
-const CLAUDE_MODEL = process.env.CLAUDE_MODEL || '';
+const claudeParts = (process.env.CLAUDE_BIN || 'claude').split(/\s+/).filter(Boolean);
+const CLAUDE_CMD = claudeParts[0];
+const CLAUDE_BASE_ARGS = claudeParts.slice(1);
 
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL || '';
 /** @type {Map<string, import('child_process').ChildProcess>} */
 const activeProcesses = new Map();
 
@@ -88,13 +90,16 @@ function handleSend(ws, sessionId, content) {
     args.push('--model', CLAUDE_MODEL);
   }
 
-  console.log(`[claude] Spawning: ${CLAUDE_BIN} ${args.slice(0, 4).join(' ')}...`);
+  // Prepend any base args from CLAUDE_BIN (e.g. "launch claude --model qwen3.5:9b")
+  const fullArgs = [...CLAUDE_BASE_ARGS, ...args];
+
+  console.log(`[claude] Spawning: ${CLAUDE_CMD} ${fullArgs.slice(0, 8).join(' ')}...`);
   if (CLAUDE_MODEL) console.log(`[claude] Model: ${CLAUDE_MODEL}`);
   console.log(`[claude] CWD: ${session.projectDir}`);
 
   let proc;
   try {
-    proc = spawn(CLAUDE_BIN, args, {
+    proc = spawn(CLAUDE_CMD, fullArgs, {
       cwd: session.projectDir,
       env: { 
         ...process.env, 
