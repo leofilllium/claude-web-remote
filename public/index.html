@@ -2,43 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claude Remote</title>
-  <meta name="description" content="Remote web interface for Claude Code CLI">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Nexus — Remote Code Terminal</title>
+  <meta name="description" content="Remote terminal interface for AI-powered code agents">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <div id="app">
+    <!-- Sidebar Backdrop (mobile) -->
     <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
 
-
-    <!-- Sidebar -->
+    <!-- Sidebar / Drawer -->
     <aside id="sidebar">
       <div class="sidebar-header">
         <div class="logo">
-          <span class="logo-icon">⚡</span>
-          <span class="logo-text">Claude Remote</span>
+          <div class="logo-mark">N</div>
+          <div class="logo-stack">
+            <span class="logo-text">Nexus</span>
+            <span class="logo-sub">remote terminal</span>
+          </div>
         </div>
-        <button id="btn-sidebar-close" class="btn-icon mobile-only" title="Close sidebar">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-        <button id="btn-new-session" class="btn-icon" title="New Session">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
+        <div class="sidebar-header-actions">
+          <button id="btn-new-session" class="btn-icon" title="New Session" aria-label="New session">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <button id="btn-sidebar-close" class="btn-icon mobile-only" title="Close" aria-label="Close sidebar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="session-search" type="text" placeholder="Filter sessions…" autocomplete="off">
       </div>
 
       <div id="sessions-list" class="sessions-list">
-        <div class="empty-state">No sessions yet</div>
+        <div class="empty-state">
+          <div class="empty-icon">◇</div>
+          <p>No sessions</p>
+          <span>Tap <strong>+</strong> to begin</span>
+        </div>
       </div>
 
       <div class="sidebar-footer">
         <div class="connection-status" id="connection-status">
           <span class="status-dot"></span>
-          <span class="status-text">Disconnected</span>
+          <span class="status-text">Connecting…</span>
         </div>
+        <div class="version-tag">v1.0</div>
       </div>
     </aside>
 
@@ -47,20 +66,21 @@
 
       <!-- Top Bar -->
       <header id="topbar">
-        <button id="btn-sidebar-toggle" class="btn-icon" title="Toggle sidebar">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <button id="btn-sidebar-toggle" class="btn-icon topbar-menu" title="Menu" aria-label="Toggle sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="17" x2="12" y2="17"/></svg>
         </button>
         <div id="topbar-info">
-          <span id="topbar-session-name" class="topbar-title">Select or create a session</span>
+          <span id="topbar-session-name" class="topbar-title">Select a session</span>
           <span id="topbar-project-path" class="topbar-subtitle"></span>
         </div>
         <div class="topbar-actions">
-          <button id="btn-flush" class="btn-sm btn-warning" title="Flush context (new Claude session)" disabled>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-            Flush
+          <button id="btn-flush" class="btn-pill btn-outline-warm" title="Flush context" disabled>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            <span class="btn-label">Flush</span>
           </button>
-          <button id="btn-cancel" class="btn-sm btn-danger" title="Cancel running process" disabled>
-            Cancel
+          <button id="btn-cancel" class="btn-pill btn-outline-red" title="Cancel" disabled>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            <span class="btn-label">Stop</span>
           </button>
         </div>
       </header>
@@ -68,24 +88,44 @@
       <!-- Messages Area -->
       <div id="messages" class="messages-area">
         <div id="welcome-screen" class="welcome-screen">
-          <div class="welcome-icon">⚡</div>
-          <h1>Claude Remote</h1>
-          <p>Remote interface for Claude Code CLI</p>
-          <p class="welcome-hint">Create a new session to get started →</p>
+          <div class="welcome-glyph">
+            <div class="glyph-ring"></div>
+            <div class="glyph-core">N</div>
+          </div>
+          <h1>Nexus</h1>
+          <p class="welcome-tagline">Your remote code terminal</p>
+          <div class="welcome-hints">
+            <div class="hint-card" id="hint-new">
+              <span class="hint-icon">+</span>
+              <span>Create a new session</span>
+            </div>
+            <div class="hint-card" id="hint-connect">
+              <span class="hint-icon">↗</span>
+              <span>Connect to your project</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Input Area -->
       <div id="input-area" class="input-area" style="display: none;">
         <div class="quick-commands">
-          <button class="cmd-btn" data-cmd="/architect ">🏗️ /architect</button>
-          <button class="cmd-btn" data-cmd="/execute">⚙️ /execute</button>
-          <button class="cmd-btn" data-cmd="/debug ">🐛 /debug</button>
+          <button class="cmd-chip" data-cmd="/architect ">
+            <span class="chip-dot" style="background:#8b5cf6"></span>architect
+          </button>
+          <button class="cmd-chip" data-cmd="/execute">
+            <span class="chip-dot" style="background:#10b981"></span>execute
+          </button>
+          <button class="cmd-chip" data-cmd="/debug ">
+            <span class="chip-dot" style="background:#f59e0b"></span>debug
+          </button>
         </div>
         <div class="input-row">
-          <textarea id="message-input" placeholder="Type a message or command..." rows="1"></textarea>
-          <button id="btn-send" class="btn-send" title="Send message">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <div class="input-wrapper">
+            <textarea id="message-input" placeholder="Message…" rows="1"></textarea>
+          </div>
+          <button id="btn-send" class="btn-send" title="Send" aria-label="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </div>
       </div>
@@ -94,19 +134,24 @@
     <!-- New Session Modal -->
     <div id="modal-overlay" class="modal-overlay hidden">
       <div class="modal">
-        <h2>New Session</h2>
-        <div class="form-group">
-          <label for="input-session-name">Session Name</label>
-          <input id="input-session-name" type="text" placeholder="My Project">
+        <div class="modal-header">
+          <h2>New Session</h2>
+          <button id="btn-modal-close" class="btn-icon" aria-label="Close modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
         <div class="form-group">
-          <label for="input-project-dir">Project Directory (absolute path)</label>
-          <input id="input-project-dir" type="text" placeholder="/home/user/my-project">
+          <label for="input-session-name">Session Name</label>
+          <input id="input-session-name" type="text" placeholder="e.g. Feature/Auth">
+        </div>
+        <div class="form-group">
+          <label for="input-project-dir">Working Directory</label>
+          <input id="input-project-dir" type="text" placeholder="/home/user/project">
         </div>
         <div id="project-suggestions" class="project-suggestions"></div>
         <div class="modal-actions">
-          <button id="btn-modal-cancel" class="btn-sm btn-ghost">Cancel</button>
-          <button id="btn-modal-create" class="btn-sm btn-primary">Create Session</button>
+          <button id="btn-modal-cancel" class="btn-pill btn-ghost">Cancel</button>
+          <button id="btn-modal-create" class="btn-pill btn-primary">Create</button>
         </div>
       </div>
     </div>
