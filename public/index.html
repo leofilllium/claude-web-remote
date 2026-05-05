@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Remote</title>
+  <meta name="description" content="Remote web interface for Claude Code CLI">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">Claude Remote</span>
+        </div>
+        <button id="btn-new-session" class="btn-icon" title="New Session">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+
+      <div id="sessions-list" class="sessions-list">
+        <div class="empty-state">No sessions yet</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="connection-status" id="connection-status">
+          <span class="status-dot"></span>
+          <span class="status-text">Disconnected</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main">
+
+      <!-- Top Bar -->
+      <header id="topbar">
+        <button id="btn-sidebar-toggle" class="btn-icon mobile-only" title="Toggle sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div id="topbar-info">
+          <span id="topbar-session-name" class="topbar-title">Select or create a session</span>
+          <span id="topbar-project-path" class="topbar-subtitle"></span>
+        </div>
+        <div class="topbar-actions">
+          <button id="btn-flush" class="btn-sm btn-warning" title="Flush context (new Claude session)" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Flush
+          </button>
+          <button id="btn-cancel" class="btn-sm btn-danger" title="Cancel running process" disabled>
+            Cancel
+          </button>
+        </div>
+      </header>
+
+      <!-- Messages Area -->
+      <div id="messages" class="messages-area">
+        <div id="welcome-screen" class="welcome-screen">
+          <div class="welcome-icon">⚡</div>
+          <h1>Claude Remote</h1>
+          <p>Remote interface for Claude Code CLI</p>
+          <p class="welcome-hint">Create a new session to get started →</p>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div id="input-area" class="input-area" style="display: none;">
+        <div class="quick-commands">
+          <button class="cmd-btn" data-cmd="/architect ">🏗️ /architect</button>
+          <button class="cmd-btn" data-cmd="/execute">⚙️ /execute</button>
+          <button class="cmd-btn" data-cmd="/debug ">🐛 /debug</button>
+        </div>
+        <div class="input-row">
+          <textarea id="message-input" placeholder="Type a message or command..." rows="1"></textarea>
+          <button id="btn-send" class="btn-send" title="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- New Session Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal">
+        <h2>New Session</h2>
+        <div class="form-group">
+          <label for="input-session-name">Session Name</label>
+          <input id="input-session-name" type="text" placeholder="My Project">
+        </div>
+        <div class="form-group">
+          <label for="input-project-dir">Project Directory (absolute path)</label>
+          <input id="input-project-dir" type="text" placeholder="/home/user/my-project">
+        </div>
+        <div id="project-suggestions" class="project-suggestions"></div>
+        <div class="modal-actions">
+          <button id="btn-modal-cancel" class="btn-sm btn-ghost">Cancel</button>
+          <button id="btn-modal-create" class="btn-sm btn-primary">Create Session</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
