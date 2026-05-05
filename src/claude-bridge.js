@@ -100,9 +100,6 @@ function handleSend(ws, sessionId, content) {
         ...process.env, 
         TERM: 'dumb', 
         NO_COLOR: '1',
-        // Explicitly pass these to ensure Claude doesn't fall back to OAuth
-        ...(process.env.ANTHROPIC_API_KEY && { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY }),
-        ...(process.env.ANTHROPIC_BASE_URL && { ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL }),
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
