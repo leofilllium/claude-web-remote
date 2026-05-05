@@ -36,7 +36,10 @@ const els = {
   btnFlush: $('#btn-flush'),
   btnCancel: $('#btn-cancel'),
   btnSidebarToggle: $('#btn-sidebar-toggle'),
+  btnSidebarClose: $('#btn-sidebar-close'),
   sidebar: $('#sidebar'),
+  sidebarBackdrop: $('#sidebar-backdrop'),
+
   topbarName: $('#topbar-session-name'),
   topbarPath: $('#topbar-project-path'),
   modalOverlay: $('#modal-overlay'),
@@ -542,10 +545,33 @@ function bindEvents() {
     wsSend({ type: 'cancel', sessionId: state.activeSessionId });
   });
 
-  // Sidebar toggle (mobile)
-  els.btnSidebarToggle.addEventListener('click', () => {
-    els.sidebar.classList.toggle('open');
+  // Sidebar toggle
+  const toggleSidebar = () => {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      els.sidebar.classList.toggle('open');
+      els.sidebarBackdrop.classList.toggle('active');
+    } else {
+      els.sidebar.classList.toggle('collapsed');
+    }
+  };
+
+  const closeSidebar = () => {
+    els.sidebar.classList.remove('open');
+    els.sidebar.classList.add('collapsed'); // For desktop if we want it to stay collapsed
+    els.sidebarBackdrop.classList.remove('active');
+  };
+
+  els.btnSidebarToggle.addEventListener('click', toggleSidebar);
+  els.btnSidebarClose.addEventListener('click', () => {
+    els.sidebar.classList.remove('open');
+    els.sidebarBackdrop.classList.remove('active');
   });
+  els.sidebarBackdrop.addEventListener('click', () => {
+    els.sidebar.classList.remove('open');
+    els.sidebarBackdrop.classList.remove('active');
+  });
+
 
   // Quick commands
   $$('.cmd-btn').forEach((btn) => {

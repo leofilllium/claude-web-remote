@@ -12,6 +12,8 @@
 </head>
 <body>
   <div id="app">
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
 
     <!-- Sidebar -->
     <aside id="sidebar">
@@ -20,6 +22,9 @@
           <span class="logo-icon">⚡</span>
           <span class="logo-text">Claude Remote</span>
         </div>
+        <button id="btn-sidebar-close" class="btn-icon mobile-only" title="Close sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
         <button id="btn-new-session" class="btn-icon" title="New Session">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
@@ -42,7 +47,7 @@
 
       <!-- Top Bar -->
       <header id="topbar">
-        <button id="btn-sidebar-toggle" class="btn-icon mobile-only" title="Toggle sidebar">
+        <button id="btn-sidebar-toggle" class="btn-icon" title="Toggle sidebar">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
         <div id="topbar-info">

@@ -69,8 +69,32 @@ html, body {
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s ease;
+  transition: transform 0.25s ease, width 0.25s ease, min-width 0.25s ease, margin-left 0.25s ease;
 }
+
+#sidebar.collapsed {
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-right: none;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 
 .sidebar-header {
   display: flex;
@@ -745,7 +769,14 @@ html, body {
     box-shadow: var(--shadow-lg);
   }
 
+  #sidebar.collapsed {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    transform: translateX(-100%);
+  }
+
   .mobile-only { display: flex; }
+
 
   .message { max-width: 95%; }
 }
