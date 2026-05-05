@@ -1,16 +1,8 @@
 import { spawn } from 'child_process';
 import { sessionManager } from './session-manager.js';
 
-/**
- * Parse CLAUDE_BIN into binary + base arguments.
- * Supports values like:
- *   "claude"
- *   "ollama launch claude --model qwen3.5:9b"
- *   "/usr/local/bin/claude"
- */
-const claudeParts = (process.env.CLAUDE_BIN || 'claude').split(/\s+/).filter(Boolean);
-const CLAUDE_CMD = claudeParts[0];
-const CLAUDE_BASE_ARGS = claudeParts.slice(1);
+const CLAUDE_BIN = process.env.CLAUDE_BIN || 'claude';
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL || '';
 
 /** @type {Map<string, import('child_process').ChildProcess>} */
 const activeProcesses = new Map();
@@ -84,22 +76,25 @@ function handleSend(ws, sessionId, content) {
   send(ws, { type: 'status', sessionId, status: 'running' });
 
   // Build claude CLI args
-  const cliArgs = [
+  const args = [
     '-p', content,
     '--output-format', 'stream-json',
     '--session-id', session.claudeSessionId,
     '--verbose',
   ];
 
-  // Prepend any base args from CLAUDE_BIN (e.g. "launch claude --model qwen3.5:9b")
-  const args = [...CLAUDE_BASE_ARGS, ...cliArgs];
+  // Add model flag if configured (e.g. "ollama:qwen3.5:9b")
+  if (CLAUDE_MODEL) {
+    args.push('--model', CLAUDE_MODEL);
+  }
 
-  console.log(`[claude] Spawning: ${CLAUDE_CMD} ${args.slice(0, 6).join(' ')}...`);
+  console.log(`[claude] Spawning: ${CLAUDE_BIN} ${args.slice(0, 4).join(' ')}...`);
+  if (CLAUDE_MODEL) console.log(`[claude] Model: ${CLAUDE_MODEL}`);
   console.log(`[claude] CWD: ${session.projectDir}`);
 
   let proc;
   try {
-    proc = spawn(CLAUDE_CMD, args, {
+    proc = spawn(CLAUDE_BIN, args, {
       cwd: session.projectDir,
       env: { ...process.env, TERM: 'dumb', NO_COLOR: '1' },
       stdio: ['pipe', 'pipe', 'pipe'],
