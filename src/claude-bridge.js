@@ -105,6 +105,9 @@ function handleSend(ws, sessionId, content) {
         ...process.env, 
         TERM: 'dumb', 
         NO_COLOR: '1',
+        // Support Qwen Code local Ollama overrides
+        ...(process.env.QWEN_BASE_URL && { QWEN_BASE_URL: process.env.QWEN_BASE_URL }),
+        ...(process.env.QWEN_API_KEY && { QWEN_API_KEY: process.env.QWEN_API_KEY }),
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
